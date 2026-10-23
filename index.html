@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>와이모바일 | AI 가격검색 & SKT 제휴카드</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --blue:#1769ff;--blue2:#0b4fd8;--navy:#10234d;--bg:#f6f8fc;
+  --line:#e5e9f1;--text:#172033;--muted:#6b7485;--yellow:#fee500;
+}
+body{margin:0;font-family:Pretendard,"Noto Sans KR",Arial,sans-serif;color:var(--text);background:var(--bg)}
+button,input,select{font:inherit}
+.header{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 max(24px,calc((100% - 1180px)/2));position:sticky;top:0;z-index:100}
+.logo{font-weight:900;font-size:24px;letter-spacing:-1.5px;color:var(--blue)}
+.logo span{color:#1b2c55}
+.nav{display:flex;gap:28px;font-weight:700;font-size:14px}
+.nav a{color:#333;text-decoration:none}
+.header-btn{border:1px solid #dfe4ee;background:#fff;border-radius:10px;padding:9px 13px;font-weight:700;cursor:pointer}
+.hero{background:linear-gradient(135deg,#eef5ff,#fff 58%,#f2f7ff);padding:58px 20px 42px}
+.hero-inner{max-width:1180px;margin:auto}
+.eyebrow{display:inline-block;background:#e5efff;color:var(--blue);font-weight:800;border-radius:20px;padding:7px 13px;font-size:13px}
+h1{font-size:42px;line-height:1.2;margin:17px 0 10px;letter-spacing:-2.4px}
+.hero p{color:var(--muted);margin:0 0 28px;font-size:16px}
+.search-card{background:#fff;border:1px solid #e0e6f0;border-radius:22px;padding:24px;box-shadow:0 15px 45px rgba(30,65,120,.09)}
+.step{display:flex;align-items:center;gap:9px;margin-bottom:18px;font-weight:800}
+.step i{font-style:normal;background:var(--navy);color:#fff;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px}
+.filters{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.field label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin:0 0 7px}
+select,.search-input{width:100%;height:48px;border:1px solid #dce2ec;border-radius:11px;background:#fff;padding:0 13px;outline:none}
+select:focus,.search-input:focus{border-color:var(--blue)}
+.search-row{display:flex;gap:12px;margin-top:14px}
+.search-input{flex:1}
+.search-btn{width:180px;border:0;border-radius:11px;background:var(--blue);color:#fff;font-weight:800;cursor:pointer}
+.search-btn:hover{background:var(--blue2)}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.quick button{border:1px solid #dfe5ef;background:#f8faff;border-radius:20px;padding:7px 12px;font-size:12px;cursor:pointer}
+.section{max-width:1180px;margin:0 auto;padding:42px 20px}
+.section-title{display:flex;align-items:end;justify-content:space-between;margin-bottom:18px}
+.section-title h2{margin:0;font-size:24px;letter-spacing:-1px}
+.section-title span{color:var(--muted);font-size:13px}
+.products{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.product{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;cursor:pointer;transition:.18s}
+.product:hover{transform:translateY(-3px);box-shadow:0 10px 25px rgba(0,0,0,.07)}
+.phone{height:145px;background:#f6f8fc;border-radius:13px;display:grid;place-items:center;margin-bottom:15px;position:relative;overflow:hidden}
+.phone-img{width:100%;height:100%;object-fit:contain;padding:5px;}
+.brand{font-size:11px;color:var(--blue);font-weight:800}
+.product h3{font-size:17px;margin:5px 0 10px}
+.price{font-weight:900;font-size:18px}
+.price small{font-size:11px;color:var(--muted);font-weight:500}
+
+/* 제휴카드 전용 스타일 */
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:15px}
+.card-item{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 15px rgba(0,0,0,.03)}
+.card-tag{display:inline-block;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:800;color:#fff;margin-bottom:10px}
+.tag-skt{background:#ea002c}
+.card-item h4{margin:0 0 8px;font-size:16px}
+.card-item p{margin:0 0 12px;font-size:13px;color:var(--muted);line-height:1.4}
+.card-benefit{background:#f8faff;border-radius:10px;padding:10px 12px;font-size:13px;font-weight:700;color:var(--navy)}
+
+.result{display:none;margin-top:18px;background:#fff;border:2px solid #dbe7ff;border-radius:18px;padding:22px}
+.result.show{display:block}
+.result-head{display:flex;justify-content:space-between;align-items:center}
+.result-head h3{margin:0;font-size:20px}
+.badge{font-size:11px;background:#edf4ff;color:var(--blue);padding:6px 9px;border-radius:20px;font-weight:800}
+.result-body{display:flex;gap:18px;align-items:flex-start;margin-top:16px}
+.result-image{width:110px;height:150px;object-fit:contain;background:#f7f9fc;border-radius:12px;display:none;flex-shrink:0}
+.result-info{flex:1;min-width:0}
+.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0}
+.result-grid.result-grid2{margin-top:10px}
+.result-item{background:#f7f9fc;border-radius:10px;padding:12px}
+.result-item span{display:block;font-size:11px;color:var(--muted);margin-bottom:5px}
+.result-item b{font-size:14px}
+.total{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:17px}
+.total b{font-size:26px;color:var(--blue)}
+.chat-btn{background:#111;color:#fff;border:0;border-radius:10px;padding:12px 18px;font-weight:800;cursor:pointer}
+.kakao{position:fixed;right:24px;top:50%;transform:translateY(-50%);width:94px;height:94px;border-radius:20px;background:var(--yellow);color:#191919;text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(0,0,0,.16);z-index:200;font-weight:800}
+.kakao .bubble{font-size:25px;line-height:1;margin-bottom:5px}
+.kakao strong{font-size:13px}.kakao small{font-size:10px;margin-top:3px}
+.notice{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.notice-inner{max-width:1180px;margin:auto;padding:13px 20px;display:flex;gap:12px;font-size:12px}
+.notice b{color:var(--blue)}
+.footer{background:#101a2d;color:#aeb7c8;padding:40px 20px;font-size:13px;line-height:1.7;}
+.footer-inner{max-width:1180px;margin:auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:30px;}
+@media(max-width:850px){
+ .nav{display:none}.filters{grid-template-columns:1fr 1fr}.products,.card-grid{grid-template-columns:1fr 1fr}
+ h1{font-size:32px}.result-grid{grid-template-columns:1fr 1fr}
+ .result-body{flex-direction:column}.result-image{width:96px;height:130px;margin:0 auto}
+ .kakao{right:14px;top:auto;bottom:18px;width:68px;height:68px;border-radius:50%}
+ .kakao small{display:none}.kakao strong{font-size:11px}.kakao .bubble{font-size:21px}
+}
+@media(max-width:520px){
+ .header{height:62px}.hero{padding-top:38px}.filters,.card-grid{grid-template-columns:1fr}
+ .search-row{flex-direction:column}.search-btn{width:100%;height:48px}
+ .products{grid-template-columns:1fr 1fr;gap:9px}.product{padding:12px}
+ .phone{height:115px}
+ .result-head{align-items:flex-start;gap:8px}.total{align-items:flex-start;gap:10px;flex-direction:column}
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="logo">와이<span>모바일</span></div>
+  <nav class="nav">
+    <a href="#search">가격 검색</a><a href="#phones">인기 휴대폰</a><a href="#card-info">SKT 제휴카드 혜택</a><a href="#notice">공지사항</a>
+  </nav>
+  <button class="header-btn" onclick="openKakao()">상담신청</button>
+</header>
+
+<section class="hero" id="search">
+<div class="hero-inner">
+  <span class="eyebrow">와이모바일 전 통신사 정규 대리점 AI 서비스</span>
+  <h1>스마트한 통신 생활의 시작<br><strong>원하는 조건의 할부원금을 실시간으로 조회하세요.</strong></h1>
+  <p>통신사와 가입유형, 휴대폰 모델 및 요금제만 선택하면 맞춤 할부원금과 지원금 혜택을 손쉽게 확인할 수 있습니다.</p>
+
+  <div class="search-card">
+    <div class="step"><i>1</i> 내 조건 선택</div>
+    <div class="filters">
+      <div class="field"><label>가입 희망 통신사</label><select id="carrier"><option value="SKT">SKT</option><option value="KT">KT</option><option value="LG U+">LG U+</option></select></div>
+      <div class="field"><label>가입유형</label><select id="type"><option value="번호이동">번호이동</option><option value="기기변경">기기변경</option></select></div>
+      <div class="field"><label>휴대폰 모델</label><select id="model" onchange="changeModel()">
+        <option value="갤럭시 S26" selected>갤럭시 S26</option>
+        <option value="갤럭시 S26+">갤럭시 S26+</option>
+        <option value="갤럭시 S26 울트라">갤럭시 S26 울트라</option>
+        <option value="갤럭시 Z 플립8">갤럭시 Z 플립8</option>
+        <option value="갤럭시 Z 폴드8">갤럭시 Z 폴드8</option>
+        <option value="갤럭시 Z 폴드8 울트라">갤럭시 Z 폴드8 울트라</option>
+        <option value="아이폰16">아이폰16</option>
+        <option value="아이폰16프로">아이폰16프로</option>
+        <option value="아이폰17">아이폰17</option>
+        <option value="아이폰17 프로">아이폰17 프로</option>
+        <option value="아이폰17 프로 맥스">아이폰17 프로 맥스</option>
+        <option value="아이폰 에어">아이폰 에어</option>
+        <option value="아이폰18 프로">아이폰18 프로</option>
+        <option value="아이폰18 프로 맥스">아이폰18 프로 맥스</option>
+      </select></div>
+      <div class="field"><label>용량</label><select id="capacity"><option value="256GB">256GB</option><option value="512GB">512GB</option></select></div>
+      <div class="field"><label>지원금 방식</label><select id="supportType"><option value="subsidy">공통지원금 받기</option><option value="select">선택약정(요금할인) 받기</option></select></div>
+      <div class="field"><label>요금제</label><select id="plan"><option value="베스트 109">베스트 109</option><option value="베스트 99">베스트 99</option><option value="베스트 89">베스트 89</option></select></div>
+      <div class="field" style="grid-column: span 3;">
+        <label style="color:var(--blue);">💳 SKT 제휴카드 라이트할부 / 청구할인 결합 (선택)</label>
+        <select id="cardDiscount">
+          <option value="0">제휴카드 할인 적용 안 함</option>
+          <option value="20000">일반 제휴카드 1구간 (전월실적 30만~40만원 이상 / 월 약 20,000원 할인)</option>
+          <option value="28000">일반 제휴카드 2구간 (전월실적 70만~80만원 이상 / 월 약 28,000원 할인)</option>
+          <option value="35000">프리미엄 제휴카드 (삼성 T프리미엄 등 / 전월실적 80만~100만원 이상 / 월 35,000원 할인)</option>
+          <option value="50000">프리미엄 고단가 카드 (전월실적 160만원 이상 / 월 50,000원 할인)</option>
+        </select>
+      </div>
+    </div>
+    <div class="search-row">
+      <input id="keyword" class="search-input" placeholder="모델명을 직접 검색해보세요 (예: S26, 아이폰17)">
+      <button class="search-btn" onclick="searchPrice()">AI 가격 검색</button>
+    </div>
+    <div class="quick">
+      <button onclick="quickSet('갤럭시 S26 울트라')">갤럭시 S26 울트라</button>
+      <button onclick="quickSet('갤럭시 Z 폴드8 울트라')">Z 폴드8 울트라</button>
+      <button onclick="quickSet('아이폰17 프로')">아이폰17 프로</button>
+      <button onclick="quickSet('아이폰18 프로 맥스')">아이폰18 프로 맥스</button>
+    </div>
+
+    <div class="result" id="result">
+      <div class="result-head"><h3 id="resultTitle">AI 가격 검색 결과</h3><span class="badge">실시간 가격 기준</span></div>
+      <div class="result-body">
+        <img id="rImage" class="result-image" alt="선택한 단말기 이미지" onerror="this.style.display='none'">
+        <div class="result-info">
+          <div class="result-grid">
+            <div class="result-item"><span>통신사</span><b id="rCarrier">-</b></div>
+            <div class="result-item"><span>가입유형</span><b id="rType">-</b></div>
+            <div class="result-item"><span>요금제</span><b id="rPlan">-</b></div>
+            <div class="result-item"><span>지원 방식</span><b id="rSupportType">-</b></div>
+          </div>
+          <div class="result-grid result-grid2">
+            <div class="result-item"><span>공통지원금</span><b id="rSubsidy">-</b></div>
+            <div class="result-item"><span>추가지원금</span><b id="rExtra">-</b></div>
+            <div class="result-item"><span>선택약정 할인(참고)</span><b id="rSelect">-</b></div>
+            <div class="result-item"><span>제휴카드 24개월 할인</span><b id="rCard">미적용</b></div>
+          </div>
+        </div>
+      </div>
+      <div class="total"><div>최종 체감 할부원금 <b id="rPrice">0원</b></div><button class="chat-btn" onclick="applyWithCondition()">이 조건으로 신청하기</button></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="section" id="card-info">
+  <div class="section-title">
+    <h2>SKT 26년 10월 대표 제휴카드 혜택 안내</h2>
+    <span>라이트할부 및 프로모션 추가할인 반영</span>
+  </div>
+  <div class="card-grid">
+    <div class="card-item">
+      <span class="card-tag tag-skt">삼성 T프리미엄</span>
+      <h4>삼성 T프리미엄 카드</h4>
+      <p>전월 실적에 따른 강력한 라이트할부 및 청구할인 혜택</p>
+      <div class="card-benefit">80만원↑: 월 35,000원 할인<br>160만원↑: 월 50,000원 할인</div>
+    </div>
+    <div class="card-item">
+      <span class="card-tag tag-skt">현대 M3 T라이트2</span>
+      <h4>현대 M3 T라이트2</h4>
+      <p>현대카드 라이트할부 결제 및 프로모션 추가 혜택</p>
+      <div class="card-benefit">50만원↑: 월 33,000원 할인<br>100만원↑: 월 35,000원 할인</div>
+    </div>
+    <div class="card-item">
+      <span class="card-tag tag-skt">신한 / KB / 롯데 T라이트</span>
+      <h4>각사 T라이트 시리즈</h4>
+      <p>신규고객 및 6개월 무실적 고객 대상 프로모션 할인 적용</p>
+      <div class="card-benefit">30만~40만원↑: 월 20,000원~26,000원<br>70만~80만원↑: 월 26,000원~29,000원</div>
+    </div>
+  </div>
+</section>
+
+<div class="notice" id="notice"><div class="notice-inner"><b>TIP</b><span>가격은 가입조건 및 정책에 따라 달라질 수 있습니다.<br>선택약정 할인은 매달 청구되는 요금에서 빠지는 금액이며 단말기 할부원금과는 별도입니다.<br>제휴카드 할인은 카드사 발급 및 전월 실적 조건 충족 시 반영되는 체감 할인금액입니다.<br>SKT, KT, LG U+ 전 통신사 지원금 및 추가할인 정책이 실시간 반영됩니다. 정확한 조건은 상담을 통해 확인해주세요.</span></div></div>
+
+<section class="section" id="phones">
+  <div class="section-title"><h2>인기 휴대폰</h2><span>가격검색으로 조건별 가격을 확인하세요</span></div>
+  <div class="products">
+    <div class="product" onclick="quickSet('갤럭시 S26 울트라')">
+      <div class="phone">
+        <img class="phone-img" src="https://i.ibb.co/BHw2tTzL/S26-Ultra.png" alt="갤럭시 S26 울트라">
+      </div>
+      <span class="brand">SAMSUNG</span>
+      <h3>갤럭시 S26 울트라</h3>
+      <div class="price">조건별 가격 확인 <small>›</small></div>
+    </div>
+    <div class="product" onclick="quickSet('갤럭시 Z 폴드8 울트라')">
+      <div class="phone">
+        <img class="phone-img" src="https://i.ibb.co/fzjMgx7K/Z-Fold8-Ultra.png" alt="갤럭시 Z 폴드8 울트라">
+      </div>
+      <span class="brand">SAMSUNG</span>
+      <h3>갤럭시 Z 폴드8 울트라</h3>
+      <div class="price">조건별 가격 확인 <small>›</small></div>
+    </div>
+    <div class="product" onclick="quickSet('아이폰17 프로')">
+      <div class="phone">
+        <img class="phone-img" src="https://i.ibb.co/GQTnkrnR/17.png" alt="아이폰17 프로">
+      </div>
+      <span class="brand">APPLE</span>
+      <h3>아이폰17 프로</h3>
+      <div class="price">조건별 가격 확인 <small>›</small></div>
+    </div>
+    <div class="product" onclick="quickSet('아이폰18 프로 맥스')">
+      <div class="phone">
+        <img class="phone-img" src="https://i.ibb.co/sdVh3hdt/18.png" alt="아이폰18 프로 맥스">
+      </div>
+      <span class="brand">APPLE</span>
+      <h3>아이폰18 프로 맥스</h3>
+      <div class="price">조건별 가격 확인 <small>›</small></div>
+    </div>
+  </div>
+</section>
+
+<a class="kakao" href="http://pf.kakao.com/_FExemG/chat" target="_blank" rel="noopener noreferrer">
+  <div class="bubble">💬</div><strong>카카오채널</strong><small>빠른 상담</small>
+</a>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <strong style="color:#fff; font-size:16px;">와이모바일</strong>
+      <p style="margin: 8px 0 10px; color:#aeb7c8;">
+        상호명: 와이모바일 | 사업자등록번호: 685-37-01373<br>
+        통신판매업신고: 제 2026-서울송파-0392 호<br>
+        주소: 서울특별시 송파구 올림픽로35길 112, B동 5층 10-1호 (신천동, 장미아파트 비상가)<br>
+        업태: 도매 및 소매업 | 종목: 전자상거래 소매업
+      </p>
+      <p style="margin: 0; font-size: 11px; color: #6b7485;">
+        실제 판매가격/지원금은 상담 및 개통 정책에 따라 달라질 수 있습니다.
+      </p>
+    </div>
+
+    <!-- 사전승낙서 및 대리점 승낙마크 (시원하게 키우고 타이틀 라벨 추가) -->
+    <div style="display:flex; gap:16px; align-items:center; flex-shrink:0;">
+      <div style="text-align:center;">
+        <div style="background:#ffffff; padding:8px 14px; border-radius:10px; border:2px solid #3b82f6; box-shadow:0 6px 16px rgba(0,0,0,0.3); display:inline-block;">
+          <a href="https://ictmarket.or.kr:8443/precon/pop_CertIcon.do?PRECON_REQ_ID=PRE0000188946&YN=1" target="_blank" rel="noopener noreferrer">
+            <img style="cursor:pointer; display:block; height:85px; width:auto;" src="https://ictmarket.or.kr:8443/getCertIcon.do?cert_icon=KP24100205387H002" alt="사전승낙서 공식인증마크">
+          </a>
+        </div>
+        <div style="font-size:11px; color:#ffffff; font-weight:700; margin-top:5px;">📜 사전승낙서 공식인증</div>
+      </div>
+
+      <div style="text-align:center;">
+        <div style="background:#ffffff; padding:8px 14px; border-radius:10px; border:2px solid #3b82f6; box-shadow:0 6px 16px rgba(0,0,0,0.3); display:inline-block;">
+          <img src="https://ictmarket.or.kr:8443/getCertIcon.do?cert_icon=AGT0000197105D14852" style="cursor:pointer; display:block; height:85px; width:auto;" onclick="window.open('https://ictmarket.or.kr:8443/agent/pop_AgentCertIcon.do?AGENT_REQ_ID=AGT0000197105&AGENT_CD=D14852','_blank','width=600, height=400, toolbar=no, menubar=no, scrollbars=no, resizable=no')" alt="공식 대리점 승낙마크"/>
+        </div>
+        <div style="font-size:11px; color:#ffffff; font-weight:700; margin-top:5px;">🛡️ 공식 대리점 승낙</div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const priceData={
+ "갤럭시 S26":{
+   capacities:{"256GB":1254000, "512GB":1507000},
+   subsidyByPlan:{"베스트 109":600000, "베스트 99":590000, "베스트 89":580000},
+   extraSupport:{select:{mno:490000, change:460000}, subsidy:{mno:440000, change:440000}},
+   image:"https://i.ibb.co/RTJQfwCc/S26.png",
+   selectDiscount:{rate:0.25, months:24}
+ },
+ "갤럭시 S26+":{
+   capacities:{"256GB":1452000, "512GB":1705000},
+   subsidyByPlan:{"베스트 109":600000, "베스트 99":590000, "베스트 89":580000},
+   extraSupport:{select:{mno:490000, change:400000}, subsidy:{mno:440000, change:330000}},
+   image:"https://i.ibb.co/RTJQfwCc/S26.png",
+   selectDiscount:{rate:0.25, months:24}
+ },
+ "갤럭시 S26 울트라":{
+   capacities:{"256GB":1797400, "512GB":2050400, "1TB":2545400},
+   subsidyByPlan:{"베스트 109":600000, "베스트 99":590000, "베스트 89":580000},
+   extraSupport:{select:{mno:490000, change:360000}, subsidy:{mno:440000, change:290000}},
+   image:"https://i.ibb.co/BHw2tTzL/S26-Ultra.png",
+   selectDiscount:{rate:0.25, months:24}
+ },
+ "갤럭시 Z 플립8":{
+   capacities:{"256GB":1683000, "512GB":1936000},
+   subsidyByPlan:{"베스트 109":500000, "베스트 99":490000, "베스트 89":480000},
+   extraSupport:{select:{mno:490000, change:230000}, subsidy:{mno:490000, change:280000}},
+   image:"https://i.ibb.co/VYWGQ0jX/Z-Flip8.png",
+   selectDiscount:{rate:0.25, months:24}
+ },
+ "갤럭시 Z 폴드8":{
+   capacities:{"256GB":2278100, "512GB":2531100},
+   subsidyByPlan:{"베스트 109":500000, "베스트 99":490000, "베스트 89":480000},
+   extraSupport:{select:{mno:440000, change:440000}, subsidy:{mno:340000, change:390000}},
+   image:"https://i.ibb.co/YTFFpZ5C/Z-Fold8.png",
+   selectDiscount:{rate:0.25, months:24}
+ },
+ "갤럭시 Z 폴드8 울트라":{
+   capacities:{"256GB":2577300, "512GB":2830300},
+   subsidyByPlan:{"베스트 109":500000, "베스트 99":490000, "베스트 89":480000},
+   extraSupport:{select:{mno:490000, change:240000}, subsidy:{mno:440000, change:290000}},
+   image:"https://i.ibb.co/fzjMgx7K/Z-Fold8-Ultra.png",
+   selectDiscount:{rate:0.25, months:24}
+ },
+ "아이폰16":{
+   capacities:{"128GB":1243000, "256GB":1397000, "512GB":1694000},
+   subsidyByPlan:{"베스트 109":220000, "베스트 99":180000, "베스트 89":150000},
+   extraSupport:{select:{mno:600000, change:440000}, subsidy:{mno:550000, change:220000}},
+   image:"https://i.ibb.co/QjHGZn9g/16.png",
+   selectDiscount:{rate:0.25, months:24}
+ },
+ "아이폰16프로":{
+   capacities:{"128GB":1540000, "256GB":1694000, "512GB":1991000, "1TB":2299000},
+   subsidyByPlan:{"베스트 109":220000, "베스트 99":180000, "베스트 89":150000},
+   extraSupport:{select:{mno:0, change:0}, subsidy:{mno:0, change:0}},
+   image:"https://i.ibb.co/7NpGcMzT/16.png",
+   selectDiscount:{rate:0.25, months:24}
+ },
+ "아이폰17":{
+   capacities:{"256GB":1287000, "512GB":1584000},
+   subsidyByPlan:{"베스트 109":450000, "베스트 99":430000, "베스트 89":420000},
+   extraSupport:{select:{mno:510000, change:270000}, subsidy:{mno:360000, change:90000}},
+   image:"https://i.ibb.co/7xCdT96c/17.png",
+   selectDiscount:{rate:0.25, months:24}
+ },
+ "아이폰17 프로":{
+   capacities:{"256GB":1782000, "512GB":2090000},
+   subsidyByPlan:{"베스트 109":450000, "베스트 99":430000, "베스트 89":420000},
+   extraSupport:{select:{mno:510000, change:320000}, subsidy:{mno:360000, change:90000}},
+   image:"https://i.ibb.co/ZzmGKbGx/17.png",
+   selectDiscount:{rate:0.25, months:24}
+ },
+ "아이폰17 프로 맥스":{
+   capacities:{"256GB":1980000, "512GB":2288000},
+   subsidyByPlan:{"베스트 109":220000, "베스트 99":180000, "베스트 89":150000},
+   extraSupport:{select:{mno:460000, change:320000}, subsidy:{mno:310000, change:90000}},
+   image:"https://i.ibb.co/kVQRTyWt/17.png",
+   selectDiscount:{rate:0.25, months:24}
+ },
+ "아이폰 에어":{
+   capacities:{"256GB":1584000, "512GB":1881000},
+   subsidyByPlan:{"베스트 109":450000, "베스트 99":430000, "베스트 89":420000},
+   extraSupport:{select:{mno:410000, change:370000}, subsidy:{mno:260000, change:20000}},
+   image:"https://i.ibb.co/v6myxjHJ/image.png",
+   selectDiscount:{rate:0.25, months:24}
+ },
+ "아이폰18 프로":{
+   capacities:{"256GB":1991000, "512GB":2299000, "1TB":2893000},
+   subsidyByPlan:{"베스트 109":450000, "베스트 99":400000, "베스트 89":300000},
+   extraSupport:{select:{mno:270000, change:320000}, subsidy:{mno:220000, change:220000}},
+   image:"https://i.ibb.co/MyvcMFnC/18.png",
+   selectDiscount:{rate:0.25, months:24}
+ },
+ "아이폰18 프로 맥스":{
+   capacities:{"256GB":2200000, "512GB":2497000, "1TB":3091000},
+   subsidyByPlan:{"베스트 109":220000, "베스트 99":180000, "베스트 89":150000},
+   extraSupport:{select:{mno:270000, change:320000}, subsidy:{mno:220000, change:220000}},
+   image:"https://i.ibb.co/dw5SKSw7/18.png",
+   selectDiscount:{rate:0.25, months:24}
+ }
+};
+
+function adjustExtraByPlan(base, plan){
+ let v = base || 0;
+ if(plan==='베스트 99') v = base - 80000;
+ else if(plan==='베스트 89') v = base - 80000 - 100000;
+ return Math.max(v, 0);
+}
+
+const planFeeMap={
+ "베스트 109":109000,
+ "베스트 99":99000,
+ "베스트 89":89000
+};
+
+function changeModel(){
+ const modelSelect = document.getElementById('model');
+ const capSelect = document.getElementById('capacity');
+ if(!modelSelect || !capSelect) return;
+ const model = modelSelect.value;
+ const caps = (priceData[model] && priceData[model].capacities) ? Object.keys(priceData[model].capacities) : ["256GB"];
+ capSelect.innerHTML = caps.map(c => `<option value="${c}">${c}</option>`).join('');
+}
+
+function quickSet(name){
+ const modelSelect = document.getElementById('model');
+ const keywordInput = document.getElementById('keyword');
+ if(modelSelect) {
+   modelSelect.value = name;
+   changeModel();
+ }
+ if(keywordInput) keywordInput.value = name;
+ searchPrice();
+ const searchSection = document.getElementById('search');
+ if(searchSection) searchSection.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function searchPrice(){
+ const carrier = document.getElementById('carrier').value;
+ const type = document.getElementById('type').value;
+ const model = document.getElementById('model').value;
+ const capacity = document.getElementById('capacity').value;
+ const plan = document.getElementById('plan').value;
+ const supportType = document.getElementById('supportType').value;
+ const cardDiscountEl = document.getElementById('cardDiscount');
+ const cardMonthlyDiscount = cardDiscountEl ? (parseInt(cardDiscountEl.value) || 0) : 0;
+
+ const data = priceData[model] || priceData["갤럭시 S26"];
+ const base = (data.capacities && data.capacities[capacity]) ? data.capacities[capacity] : 1254000;
+ const planFee = planFeeMap[plan] ?? 109000;
+
+ let deviceDiscount = 0, supportLabel = "";
+ let subsidyText = "-", extraText = "-", selectText = "-";
+ const typeKey = type === '번호이동' ? 'mno' : 'change';
+
+ if(supportType === 'select'){
+   const extraByType = adjustExtraByPlan(data.extraSupport.select[typeKey], plan);
+   const planDiscountTotal = Math.round(planFee * data.selectDiscount.rate * data.selectDiscount.months);
+   deviceDiscount = extraByType;
+   supportLabel = "선택약정 + 와이 추가지원금 (" + carrier + ")";
+   extraText = extraByType.toLocaleString() + "원";
+   selectText = planDiscountTotal.toLocaleString() + "원 (24개월 요금할인)";
+ } else {
+   const planSubsidy = data.subsidyByPlan[plan] ?? 0;
+   const extraByType = adjustExtraByPlan(data.extraSupport.subsidy[typeKey], plan);
+   deviceDiscount = planSubsidy + extraByType;
+   supportLabel = "공통지원금 + 와이 추가지원금 (" + carrier + ")";
+   subsidyText = planSubsidy.toLocaleString() + "원";
+   extraText = extraByType.toLocaleString() + "원";
+ }
+
+ const totalCardDiscount = cardMonthlyDiscount * 24;
+ const finalPrice = Math.max(base - deviceDiscount - totalCardDiscount, 0);
+
+ document.getElementById('resultTitle').textContent = model + " (" + capacity + ") 가격검색 결과";
+ document.getElementById('rCarrier').textContent = carrier;
+ document.getElementById('rType').textContent = type;
+ document.getElementById('rPlan').textContent = plan;
+ document.getElementById('rSupportType').textContent = supportLabel;
+
+ const rImg = document.getElementById('rImage');
+ if(data.image) {
+   rImg.src = data.image;
+   rImg.style.display = 'block';
+ } else {
+   rImg.style.display = 'none';
+ }
+
+ document.getElementById('rSubsidy').textContent = subsidyText;
+ document.getElementById('rExtra').textContent = extraText;
+ document.getElementById('rSelect').innerHTML = selectText;
+ document.getElementById('rCard').textContent = totalCardDiscount > 0 ? `-${totalCardDiscount.toLocaleString()}원 (월 ${cardMonthlyDiscount.toLocaleString()}원)` : "미적용";
+ document.getElementById('rPrice').textContent = finalPrice.toLocaleString() + "원";
+
+ const resultEl = document.getElementById('result');
+ if(resultEl) {
+   resultEl.classList.add('show');
+   resultEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+ }
+}
+
+function openKakao(){
+  window.open('http://pf.kakao.com/_FExemG/chat','_blank');
+}
+
+function applyWithCondition(){
+  const title = document.getElementById('resultTitle').textContent;
+  const carrier = document.getElementById('rCarrier').textContent;
+  const type = document.getElementById('rType').textContent;
+  const plan = document.getElementById('rPlan').textContent;
+  const supportType = document.getElementById('rSupportType').textContent;
+  const cardInfo = document.getElementById('rCard').textContent;
+  const price = document.getElementById('rPrice').textContent;
+
+  const summaryText = `[와이모바일 개통 상담 신청]\n- 모델: ${title}\n- 통신사: ${carrier}\n- 가입유형: ${type}\n- 요금제: ${plan}\n- 지원방식: ${supportType}\n- 제휴카드 할인: ${cardInfo}\n- 예상 체감 할부원금: ${price}\n\n위 조건으로 개통 상담 요청합니다.`;
+
+  navigator.clipboard.writeText(summaryText).then(() => {
+    alert("조회하신 조건 정보가 복사되었습니다!\n열리는 카카오톡 채팅창에 붙여넣기(Ctrl+V) 하신 후 메시지를 전송해 주세요.");
+    openKakao();
+  }).catch(() => {
+    openKakao();
+  });
+}
+</script>
+</body>
+</html>
